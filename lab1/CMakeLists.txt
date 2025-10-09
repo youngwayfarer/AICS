@@ -46,9 +46,15 @@ install(FILES mlp.h data_generator.h
 # 如果使用OpenMP（可选）
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
+    target_link_libraries(mlp_lib OpenMP::OpenMP_CXX)
     target_link_libraries(train OpenMP::OpenMP_CXX)
     target_link_libraries(validate OpenMP::OpenMP_CXX)
+    target_compile_definitions(mlp_lib PRIVATE _OPENMP)
+    target_compile_definitions(train PRIVATE _OPENMP)
+    target_compile_definitions(validate PRIVATE _OPENMP)
     message(STATUS "OpenMP found - enabling parallel processing")
+else()
+    message(STATUS "OpenMP not found - using serial processing")
 endif()
 
 # 打印配置信息

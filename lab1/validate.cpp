@@ -1,4 +1,3 @@
-#include "data_generator.h"
 #include "mlp.h"
 #include <algorithm>
 #include <cmath>
@@ -28,7 +27,6 @@ evaluate_model(MLP &model, const std::vector<std::vector<double>> &inputs,
   double total_abs_error = 0.0;
   double sum_squared_error = 0.0;
 
-  // 计算预测值和各种误差
   for (size_t i = 0; i < inputs.size(); ++i) {
     auto prediction = model.predict(inputs[i]);
     double pred_value = prediction[0];
@@ -139,10 +137,8 @@ void print_error_statistics(const EvaluationResults &results) {
 
 int main() {
   std::cout << "=== MLP网络验证程序 ===" << std::endl;
-  std::cout << "用于验证训练好的MLP模型" << std::endl;
   std::cout << "========================================" << std::endl;
 
-  // 检查模型文件是否存在
   std::ifstream model_file("best_model.txt");
   if (!model_file.good()) {
     std::cerr << "错误: 找不到模型文件 'best_model.txt'" << std::endl;
@@ -151,7 +147,6 @@ int main() {
   }
   model_file.close();
 
-  // 创建MLP网络并加载模型
   std::vector<int> hidden_sizes = {64, 32, 16};
   MLP model(2, hidden_sizes, 1, 0.1);
 
@@ -166,14 +161,9 @@ int main() {
   model.print_architecture();
   std::cout << std::endl;
 
-  // 创建数据生成器
-  DataGenerator data_gen(-1.0, 1.0, 123); // 使用不同的种子
-
-  // 生成测试数据
   std::vector<std::vector<double>> test_inputs, test_targets;
   const int test_size = 1000;
 
-  // 尝试读取已存在的测试数据文件
   bool test_data_loaded = false;
   std::ifstream test_file_check("test_data.csv");
   if (test_file_check.good()) {
@@ -181,7 +171,7 @@ int main() {
     test_file_check.close();
     std::ifstream test_file("test_data.csv");
     std::string line;
-    std::getline(test_file, line); // 跳过标题行
+    std::getline(test_file, line);
 
     while (std::getline(test_file, line) && test_inputs.size() < test_size) {
       std::istringstream ss(line);
@@ -212,38 +202,18 @@ int main() {
     }
   }
 
-  // 如果测试数据文件不存在或不完整，则生成新数据
   if (!test_data_loaded) {
-    std::cout << "生成新的测试数据..." << std::endl;
-    data_gen.generate_test_data(test_size, test_inputs, test_targets);
-
-    // 保存测试数据到文件
-    std::ofstream test_file("test_data.csv");
-    if (!test_file.is_open()) {
-      std::cerr << "无法创建测试数据文件: test_data.csv" << std::endl;
-    } else {
-      test_file << "input1,input2,target" << std::endl;
-      for (size_t i = 0; i < test_inputs.size(); ++i) {
-        test_file << test_inputs[i][0] << "," << test_inputs[i][1] << ","
-                  << test_targets[i][0] << std::endl;
-      }
-      test_file.close();
-      std::cout << "测试数据已保存到: test_data.csv" << std::endl;
-    }
+    std::cout << "数据集文件不存在，程序退出。" << std::endl;
+    return 1;
   }
 
-  // 在测试集上评估
   std::cout << "在测试集上评估模型..." << std::endl;
   auto test_results = evaluate_model(model, test_inputs, test_targets);
   print_evaluation_results(test_results, "测试集");
-
-  // 打印误差统计
   print_error_statistics(test_results);
 
-  // 保存预测结果
   save_predictions_csv(test_results, "test_predictions.csv");
 
-  // 保存评估报告
   std::ofstream report("evaluation_report.txt");
   if (report.is_open()) {
     report << "MLP网络评估报告" << std::endl;

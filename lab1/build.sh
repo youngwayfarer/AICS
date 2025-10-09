@@ -37,7 +37,15 @@ create_build_dir() {
 # 配置项目
 configure_project() {
     echo "配置项目..."
-    cmake .. -DCMAKE_BUILD_TYPE=Release
+    # 检查OpenMP支持
+    if command -v gcc &> /dev/null && gcc -fopenmp -E -dM - < /dev/null 2>/dev/null | grep -q "_OPENMP"; then
+        echo "✓ 检测到OpenMP支持，启用并行化"
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_OPENMP=ON
+    else
+        echo "⚠ 未检测到OpenMP支持，使用串行版本"
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_OPENMP=OFF
+    fi
+    
     if [ $? -ne 0 ]; then
         echo "错误: CMake配置失败"
         exit 1
