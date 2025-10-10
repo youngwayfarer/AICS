@@ -82,6 +82,30 @@ double MLP::sigmoid_derivative(double x) {
 
 // TODO: 可以实现 dropout
 
+double MLP::mse_loss(const std::vector<double> &prediction,
+                     const std::vector<double> &target) {
+  if (prediction.size() != target.size()) {
+    throw std::invalid_argument("预测和目标大小不匹配");
+  }
+
+  double sum = 0.0;
+  for (size_t i = 0; i < prediction.size(); ++i) {
+    double diff = prediction[i] - target[i];
+    sum += diff * diff;
+  }
+
+  return sum / prediction.size();
+}
+
+std::vector<double>
+MLP::mse_loss_derivative(const std::vector<double> &prediction,
+                         const std::vector<double> &target) {
+  std::vector<double> derivative(prediction.size());
+  // TODO: 计算 MSE 损失函数的导数
+
+  return derivative;
+}
+
 std::vector<double> MLP::forward(const std::vector<double> &input) {
   if (input.size() != input_size_) {
     throw std::invalid_argument("输入大小不匹配");
@@ -144,33 +168,9 @@ std::vector<double> MLP::predict(const std::vector<double> &input) {
   return forward(input);
 }
 
-double MLP::mse_loss(const std::vector<double> &prediction,
-                     const std::vector<double> &target) {
-  if (prediction.size() != target.size()) {
-    throw std::invalid_argument("预测和目标大小不匹配");
-  }
-
-  double sum = 0.0;
-  for (size_t i = 0; i < prediction.size(); ++i) {
-    double diff = prediction[i] - target[i];
-    sum += diff * diff;
-  }
-
-  return sum / prediction.size();
-}
-
-std::vector<double>
-MLP::mse_loss_derivative(const std::vector<double> &prediction,
-                         const std::vector<double> &target) {
-  std::vector<double> derivative(prediction.size());
-  // TODO: 计算 MSE 损失函数的导数
-
-  return derivative;
-}
-
 std::pair<std::vector<std::vector<double>>, std::vector<std::vector<double>>>
 MLP::forward_with_cache(const std::vector<double> &input) {
-  // TODO: 实现前向传播，并保存反向传播必需的相关值
+  // TODO: 实现前向传播，并保存反向传播必需的相关值，如每层的激活值和线性和
 }
 
 void MLP::backward(const std::vector<double> &input,
@@ -178,7 +178,6 @@ void MLP::backward(const std::vector<double> &input,
                    const std::vector<std::vector<double>> &activations,
                    const std::vector<std::vector<double>> &linear_sums,
                    double learning_rate) {
-
   // TODO: 实现反向传播
 }
 

@@ -15,7 +15,6 @@ void print_training_progress(int epoch, int total_epochs, double train_loss,
             << " - 训练损失: " << std::fixed << std::setprecision(6)
             << train_loss << " - 验证损失: " << std::fixed
             << std::setprecision(6) << val_loss << std::endl;
-  std::cout << "--------------------------" << std::endl;
 }
 
 void save_training_history(const std::vector<double> &train_losses,
@@ -38,6 +37,9 @@ void save_training_history(const std::vector<double> &train_losses,
 }
 
 // TODO: 实现完整的训练程序，你可以添加任意机制，如早停、学习率衰减等
+// 注意！当前训练程序并未保存训练好的模型
+// 请根据你的训练策略来决定何时保存最佳模型
+// Hint：使用 model.save_model("best_model.txt") 来保存模型
 int main() {
   std::cout << "=== MLP网络训练程序 ===" << std::endl;
   std::cout << "用于预测两个输入数字的乘积" << std::endl;
@@ -123,28 +125,26 @@ int main() {
   }
 
   // TODO: 创建合适的网络结构，并选择合适的超参数
-  // std::vector<int> hidden_sizes = {};
-  // MLP model(2, hidden_sizes, 1, );
+  std::vector<int> hidden_sizes = {};
+  MLP model(2, hidden_sizes, 1, );
 
   model.print_architecture();
   std::cout << std::endl;
 
   // TODO: 选择合适的训练参数
-  // const int epochs = 2000;
-  // double learning_rate = 0.0005;
-  // const int batch_size = 64;
+  const int epochs = ;
+  double learning_rate = ;
+  const int batch_size = ;
 
   // 记录训练历史
   std::vector<double> train_losses, val_losses;
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  // 训练循环
   for (int epoch = 0; epoch < epochs; ++epoch) {
-    // 训练阶段
     model.train(train_inputs, train_targets, learning_rate, batch_size);
 
-    // 计算训练损失
+    // 计算损失
     double train_loss = model.evaluate(train_inputs, train_targets);
     double val_loss = model.evaluate(val_inputs, val_targets);
 
