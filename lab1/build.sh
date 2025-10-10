@@ -37,14 +37,7 @@ create_build_dir() {
 # 配置项目
 configure_project() {
     echo "配置项目..."
-    # 检查OpenMP支持
-    if command -v gcc &> /dev/null && gcc -fopenmp -E -dM - < /dev/null 2>/dev/null | grep -q "_OPENMP"; then
-        echo "✓ 检测到OpenMP支持，启用并行化"
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_OPENMP=ON
-    else
-        echo "⚠ 未检测到OpenMP支持，使用串行版本"
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_OPENMP=OFF
-    fi
+    cmake .. -DCMAKE_BUILD_TYPE=Release
     
     if [ $? -ne 0 ]; then
         echo "错误: CMake配置失败"
@@ -63,16 +56,6 @@ build_project() {
     echo "✓ 编译完成"
 }
 
-# 运行示例
-run_example() {
-    echo "运行示例程序..."
-    if [ -f "bin/example" ]; then
-        ./bin/example
-    else
-        echo "警告: 示例程序未找到"
-    fi
-}
-
 # 主函数
 main() {
     check_dependencies
@@ -85,13 +68,11 @@ main() {
     echo "可执行文件位置:"
     echo "  - 训练程序: build/bin/train"
     echo "  - 验证程序: build/bin/validate"
-    echo "  - 示例程序: build/bin/example"
     echo ""
     echo "使用方法:"
     echo "  cd build"
     echo "  ./bin/train      # 训练模型"
     echo "  ./bin/validate   # 验证模型"
-    echo "  ./bin/example    # 运行示例"
 }
 
 # 运行主函数
