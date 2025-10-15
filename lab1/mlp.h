@@ -20,14 +20,11 @@ public:
 
   std::vector<double> forward(const std::vector<double> &input);
 
-  std::vector<std::vector<double>>
-  forward_batch(const std::vector<std::vector<double>> &inputs);
-
   std::vector<double> predict(const std::vector<double> &input);
 
   void train(const std::vector<std::vector<double>> &inputs,
-                   const std::vector<std::vector<double>> &targets,
-                   double learning_rate = 0.001, int batch_size = 32);
+             const std::vector<std::vector<double>> &targets,
+             double learning_rate = 0.001, int batch_size = 32);
 
   double evaluate(const std::vector<std::vector<double>> &inputs,
                   const std::vector<std::vector<double>> &targets);

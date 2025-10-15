@@ -113,9 +113,14 @@ std::vector<double> MLP::forward(const std::vector<double> &input) {
 
   std::vector<double> current_input = input;
 
+  // 这段代码可能会是性能瓶颈，请思考应该怎么设计合理的数据结构以及相应的算法来提高性能
+  // 仅思考即可，我们将在后续的实验中展示当前主流的做法
   for (size_t layer = 0; layer < hidden_sizes_.size(); ++layer) {
     std::vector<double> next_input(hidden_sizes_[layer]);
 
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
     for (int neuron = 0; neuron < hidden_sizes_[layer]; ++neuron) {
       double sum = biases_[layer][neuron];
       for (size_t i = 0; i < current_input.size(); ++i) {
@@ -129,6 +134,9 @@ std::vector<double> MLP::forward(const std::vector<double> &input) {
   }
 
   std::vector<double> output(output_size_);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
   for (int neuron = 0; neuron < output_size_; ++neuron) {
     double sum = biases_[hidden_sizes_.size()][neuron];
     for (size_t i = 0; i < current_input.size(); ++i) {
@@ -138,30 +146,6 @@ std::vector<double> MLP::forward(const std::vector<double> &input) {
   }
 
   return output;
-}
-
-std::vector<std::vector<double>>
-MLP::forward_batch(const std::vector<std::vector<double>> &inputs) {
-  std::vector<std::vector<double>> outputs(inputs.size());
-
-  // 使用OpenMP并行处理，保证输出顺序
-#ifdef _OPENMP
-// 设置线程数（可选，默认使用系统核心数）
-// omp_set_num_threads(4);
-
-// 使用静态调度保证顺序，每个线程处理连续的输入
-#pragma omp parallel for schedule(static)
-  for (size_t i = 0; i < inputs.size(); ++i) {
-    outputs[i] = forward(inputs[i]);
-  }
-#else
-  // 如果没有OpenMP支持，使用串行处理
-  for (size_t i = 0; i < inputs.size(); ++i) {
-    outputs[i] = forward(inputs[i]);
-  }
-#endif
-
-  return outputs;
 }
 
 std::vector<double> MLP::predict(const std::vector<double> &input) {
@@ -182,8 +166,8 @@ void MLP::backward(const std::vector<double> &input,
 }
 
 void MLP::train(const std::vector<std::vector<double>> &inputs,
-                      const std::vector<std::vector<double>> &targets,
-                      double learning_rate, int batch_size) {
+                const std::vector<std::vector<double>> &targets,
+                double learning_rate, int batch_size) {
 
   // TODO: 实现模型训练方法
 }
