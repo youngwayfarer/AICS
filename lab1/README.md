@@ -12,7 +12,10 @@ lab1/
 ├── validate.cpp       # 验证程序
 ├── CMakeLists.txt     # CMake构建文件
 ├── build.sh           # 构建脚本
-└── README.md          # 说明文档
+├── train_data.csv     # 训练数据
+├── val_data.csv       # 验证数据
+├── README.md          # 实验说明文档
+└── test_data.csv      # 测试数据
 ```
 
 ## 环境要求
