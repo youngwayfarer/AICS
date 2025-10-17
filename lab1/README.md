@@ -31,8 +31,24 @@ lab1/
 - Make 构建工具
 - 支持C++17的编译器（GCC 7+等）
 
+在 Ubuntu 上，可以使用以下命令安装相关必要工具：
+
+```bash
+sudo apt update
+sudo apt install build-essential cmake
+```
+可以使用以下命令检查是否正确安装：
+
+```bash
+gcc --version
+make --version
+cmake --version
+```
+
 ### 可选工具
 - OpenMP（用于并行化加速）
+
+一般情况下，GCC自带OpenMP支持，无需额外安装。
 
 ## 快速开始
 
